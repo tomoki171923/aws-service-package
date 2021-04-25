@@ -1,5 +1,5 @@
 # aws-lambda-layer
-Python Packages as AWS Lambda Layers to operate AWS native services. They have basic functions or abstract classes of AWS native services.
+Python Packages as AWS Lambda Layers to operate AWS native services. They have basic functions or abstract classes of each service.
 
 ```
 root
