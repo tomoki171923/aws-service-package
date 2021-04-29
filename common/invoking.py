@@ -3,7 +3,7 @@
 import json
 import os
 import boto3
-from src.layer.service.common import myconst
+from src.layer.logic import myconst
 
 
 lambda_client = boto3.client('lambda', myconst.cst.REGION)

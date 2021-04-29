@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.header import Header
 import boto3
-from src.layer.service.common import myconst
+from src.layer.logic import myconst
 from src.layer.service.common.environment import isDev, isSt
 
 

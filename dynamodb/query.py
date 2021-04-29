@@ -4,7 +4,7 @@
 This class is query operation class at AWS DynamoDB Table.
 '''
 
-from src.layer.service.common import myconst
+from src.layer.logic import myconst
 from src.layer.service.common.environment import isPro, isLocal, isDocker
 from src.layer.base.split import splitList
 from typing import Callable
