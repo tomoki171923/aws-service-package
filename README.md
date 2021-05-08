@@ -8,3 +8,9 @@ root
  └ dynamodb  ... for AWS DynamoDB.
  └ ses  ... for AWS SES.
 ```
+
+## How to use
+
+for example.
+
+https://github.com/tomoki171923/microservice-saviola
