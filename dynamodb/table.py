@@ -120,7 +120,8 @@ class Table(metaclass=ABCMeta):
             if len(data) == 0:
                 return
             for batch_items in self.split_list(data, Table.ITEM_COUNT):
-                request_items = list(map(self.__getBatchRequest, batch_items))
+                request_items: list = list(
+                    map(self.__getBatchRequest, batch_items))
                 self.__batchWriteItem(request_items)
         else:
             return
@@ -149,7 +150,7 @@ class Table(metaclass=ABCMeta):
             if len(data) == 0:
                 return
             for batch_items in self.split_list(data, Table.ITEM_COUNT):
-                request_items = list(
+                request_items: list = list(
                     map(self.__getBatchRequest, batch_items))
                 self.__batchWriteItem(request_items)
         else:
@@ -207,8 +208,13 @@ class Table(metaclass=ABCMeta):
                 formatted_item[k] = self.__formatItem(v)
             elif type(v) is list:
                 value_list = list()
-                for each_v in v:
-                    value_list.append(self.__formatItem(each_v))
+                if type(v[0]) is str or type(v[0]) is int:
+                    # [111, 222, 333] or ['aaa', 'bbb', 'ccc']
+                    value_list = v
+                else:
+                    # [{},{},{}] or [[],[],[]]
+                    for each_v in v:
+                        value_list.append(self.__formatItem(each_v))
                 formatted_item[k] = value_list
             elif type(v) is float:
                 formatted_item[k] = Decimal(str(v))
@@ -262,11 +268,11 @@ class Table(metaclass=ABCMeta):
         The BatchWriteItem operation puts or deletes multiple items in one or more tables.
         https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html#DynamoDB.ServiceResource.batch_write_item
     Args:
-        request_items (dict): request items.
+        request_items (list): request items.
     '''
 
-    def __batchWriteItem(self, request_items: dict) -> None:
-        resutn_consumed_capacity = 'INDEXES' if not self.IS_PRO else 'NONE'
+    def __batchWriteItem(self, request_items: list) -> None:
+        resutn_consumed_capacity: str = 'INDEXES' if not self.IS_PRO else 'NONE'
         response = resource.batch_write_item(
             RequestItems={
                 self.table_name: request_items
