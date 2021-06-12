@@ -64,10 +64,10 @@ class Query:
 
     ''' execute query method of DynamoDB Table class.
     Returns:
-        dict: the result of a Query operation.
+        list: the result of a Query operation.
     '''
 
-    def run(self) -> dict:
+    def run(self) -> list:
         if self.__f_exp:
             response = self.__query(
                 KeyConditionExpression=self.__kc_exp,
