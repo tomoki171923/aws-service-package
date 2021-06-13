@@ -3,6 +3,7 @@
 import json
 import os
 import boto3
+import botocore
 
 
 ''' Executing another lambda function synchronously
@@ -54,13 +55,10 @@ def __execLambda(function_region: str, function_name: str, event: dict, invocati
     else:
         function = f"{function_name}:{os.environ['AWS_LAMBDA_FUNCTION_ALIAS']}"
 
-    response = lambda_client.invoke(
+    response: botocore.response.StreamingBody = lambda_client.invoke(
         FunctionName=function,
         InvocationType=invocationType,
         Payload=json.dumps(event)
     )
     payLoad: bytes = response['Payload'].read()
-    if payLoad != '' or payLoad is not None:
-        return {}
-    else:
-        return json.loads(payLoad.decode('utf-8'))
+    return json.loads(payLoad.decode('utf-8'))
