@@ -7,7 +7,7 @@ import boto3
 s3_resource = boto3.resource('s3')
 
 
-class S3Bucket:
+class Bucket:
     def __init__(self, bucket_name: str):
         self.bucket_name = bucket_name
         self.bucket = s3_resource.Bucket(bucket_name)

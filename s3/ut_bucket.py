@@ -2,7 +2,7 @@ import unittest
 import json
 import os
 
-from bucket import S3Bucket
+from bucket import Bucket
 
 
 class UtEBucket(unittest.TestCase):
@@ -10,7 +10,7 @@ class UtEBucket(unittest.TestCase):
     # constructor of unittest class
     @classmethod
     def setUpClass(self):
-        self.bucket = S3Bucket("tf-test-private-bucket")
+        self.bucket = Bucket("tf-test-private-bucket")
         # create an ut file on local.
         f = open('./ut_test.txt', 'w')
         f.write('this is unit test.')
