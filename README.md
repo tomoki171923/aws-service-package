@@ -6,6 +6,7 @@ root
  └ cloudwatch  ... for AWS Cloudwatch.
  └ common  ... for AWS Lambda.
  └ dynamodb  ... for AWS DynamoDB.
+ └ s3  ... for AWS S3.
  └ ses  ... for AWS SES.
 ```
 
