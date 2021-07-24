@@ -14,30 +14,43 @@ from src.layer.service.common.environment import isPro, isLocal, isDocker
 
 # Initialize DynamoDB connection instance.
 if isLocal():
-    endpoint_url = myconst.cst.END_POINT_URL_DOCKER if isDocker(
-    ) else myconst.cst.END_POINT_URL_LOCAL
-    resource = boto3.resource('dynamodb', endpoint_url=endpoint_url, config=botocore.client.Config(
-        max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS))
+    endpoint_url = (
+        myconst.cst.END_POINT_URL_DOCKER
+        if isDocker()
+        else myconst.cst.END_POINT_URL_LOCAL
+    )
+    resource = boto3.resource(
+        "dynamodb",
+        endpoint_url=endpoint_url,
+        config=botocore.client.Config(
+            max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS
+        ),
+    )
 else:
-    resource = boto3.resource('dynamodb', config=botocore.client.Config(
-        max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS))
+    resource = boto3.resource(
+        "dynamodb",
+        config=botocore.client.Config(
+            max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS
+        ),
+    )
 
-'''
+"""
 This class is an abstract class at AWS DynamoDB Table.
-'''
+"""
 
 
 class Table(metaclass=ABCMeta):
     # this number is the maximum number of can comprise requests.
     ITEM_COUNT = 25
 
-    ''' abstract Method. the concrete class has to override this method.
+    """ abstract Method. the concrete class has to override this method.
         constructor.
     Args:
         table_name (str): table name.
         pk_name (str): partition key's name.
         sk_name (str, optional): sort key's name.
-    '''
+    """
+
     @abstractmethod
     def __init__(self, table_name: str, pk_name: str, sk_name: str = None):
         self.table: boto3.resource.table = resource.Table(table_name)
@@ -66,23 +79,18 @@ class Table(metaclass=ABCMeta):
         del self.table_name
         del self.table
 
-    ''' finding the item.
+    """ finding the item.
     Args:
         pk (str): partition key.
         sk (str): sort key.
     Returns:
         dict: the result of a Query operation.
-    '''
+    """
 
     def find(self, pk: str, sk: str) -> dict:
-        response = self.table.get_item(
-            Key={
-                self.pk_name: pk,
-                self.sk_name: sk
-            }
-        )
-        key = 'Item'
-        if not key in response:
+        response = self.table.get_item(Key={self.pk_name: pk, self.sk_name: sk})
+        key = "Item"
+        if key not in response:
             return None
         return self._filter(response, key)
 
@@ -100,10 +108,10 @@ class Table(metaclass=ABCMeta):
     def update(self):
         pass
 
-    ''' put an item or items into the table.
+    """ put an item or items into the table.
     Args:
         data (dict or list): an item or items putting into the table.
-    '''
+    """
 
     def put(self, data: list | dict) -> None:
         if not self.IS_PRO:
@@ -112,16 +120,13 @@ class Table(metaclass=ABCMeta):
             self.time_watch.start(action_name)
         if type(data) is dict:
             # put an item
-            self.table.put_item(
-                Item=self.__formatItem(data)
-            )
+            self.table.put_item(Item=self.__formatItem(data))
         elif type(data) is list:
             # put items
             if len(data) == 0:
                 return
             for batch_items in self.split_list(data, Table.ITEM_COUNT):
-                request_items: list = list(
-                    map(self.__getBatchRequest, batch_items))
+                request_items: list = list(map(self.__getBatchRequest, batch_items))
                 self.__batchWriteItem(request_items)
         else:
             return
@@ -129,10 +134,10 @@ class Table(metaclass=ABCMeta):
             # stop measuring the run time & print log.
             self.time_watch.stop(action_name)
 
-    ''' delete an item or items on the table.
+    """ delete an item or items on the table.
     Args:
         data (dict or list): an item or items deleting on the table.
-    '''
+    """
 
     def delete(self, data: list | dict) -> None:
         if not self.IS_PRO:
@@ -142,16 +147,13 @@ class Table(metaclass=ABCMeta):
         if type(data) is dict:
             # delete an item
             formated_data = self.__formatItem(data)
-            self.table.delete_item(
-                Key=self.__getRequestKey(formated_data)
-            )
+            self.table.delete_item(Key=self.__getRequestKey(formated_data))
         elif type(data) is list:
             # delete items
             if len(data) == 0:
                 return
             for batch_items in self.split_list(data, Table.ITEM_COUNT):
-                request_items: list = list(
-                    map(self.__getBatchRequest, batch_items))
+                request_items: list = list(map(self.__getBatchRequest, batch_items))
                 self.__batchWriteItem(request_items)
         else:
             return
@@ -162,30 +164,30 @@ class Table(metaclass=ABCMeta):
     # log total WCU, RCU and loaded contents size on the table.
 
     def loggerPerformance(self) -> None:
-        print('************ Performance Log ************')
-        print(f'table: {self.table_name}')
-        print(f'total_rcu: {self.total_rcu}')
-        print(f'total_read_content_size: {self.total_read_content_size}')
-        print(f'total_wcu: {self.total_wcu}')
-        print('******************************************')
+        print("************ Performance Log ************")
+        print(f"table: {self.table_name}")
+        print(f"total_rcu: {self.total_rcu}")
+        print(f"total_read_content_size: {self.total_read_content_size}")
+        print(f"total_wcu: {self.total_wcu}")
+        print("******************************************")
 
-    ''' filtering a response.
+    """ filtering a response.
     Args:
         response (dict): a response from a DynamoDB operation.
         key (str): the key to filter.
     Returns:
         dict: the filtered response.
-    '''
+    """
 
     def _filter(self, response: dict, key: str) -> dict:
         return response[key]
 
-    ''' filtering a result data from a Query operation.
+    """ filtering a result data from a Query operation.
     Args:
         data (dict): the result data from a Query operation.
     Returns:
         dict: the filtered result.
-    '''
+    """
 
     def _filterQuery(self, data: dict) -> dict:
         del data["Count"]
@@ -193,13 +195,13 @@ class Table(metaclass=ABCMeta):
         del data["ResponseMetadata"]
         return data
 
-    ''' format an item which puts into the table.
+    """ format an item which puts into the table.
         (convert Float into Decimal in the item)
     Args:
         item (dict): an unformatted item
     Returns:
         dict: a formatted item.
-    '''
+    """
 
     def __formatItem(self, item: dict) -> dict:
         formatted_item = dict()
@@ -222,67 +224,59 @@ class Table(metaclass=ABCMeta):
                 formatted_item[k] = v
         return formatted_item
 
-    ''' get a request key to read or delete an item from table.
+    """ get a request key to read or delete an item from table.
     Args:
         item (dict): an item.
     Returns:
         dict: request key.
-    '''
+    """
 
     def __getRequestKey(self, item: dict) -> dict:
         request_key = dict()
         for attribute_name in self.table.key_schema:
-            attr_name = attribute_name['AttributeName']
+            attr_name = attribute_name["AttributeName"]
             request_key[attr_name] = item[attr_name]
         return request_key
 
-    ''' get a request for batch_write_item method which DynamoDB.ServiceResource class has.
-        DeleteRequest - Perform a DeleteItem operation on the specified item. The item to be deleted is identified by a Key subelement:
-        PutRequest - Perform a PutItem operation on the specified item. The item to be put is identified by an Item subelement:
+    """ get a request for batch_write_item method which DynamoDB.ServiceResource class has.
+        DeleteRequest -
+            Perform a DeleteItem operation on the specified item. The item to be deleted is identified by a Key subelement:
+        PutRequest -
+            Perform a PutItem operation on the specified item. The item to be put is identified by an Item subelement:
     Args:
         item (dict): an item.
     Returns:
         dict: request for batch_write_item method.
-    '''
+    """
 
     def __getBatchRequest(self, item: dict) -> dict:
         caller = inspect.stack()[1].function
-        if caller == 'put':
-            return {
-                'PutRequest': {
-                    'Item': self.__formatItem(item)
-                }
-            }
-        elif caller == 'delete':
-            request = {
-                'DeleteRequest': {
-                    'Key': {}
-                }
-            }
+        if caller == "put":
+            return {"PutRequest": {"Item": self.__formatItem(item)}}
+        elif caller == "delete":
+            request = {"DeleteRequest": {"Key": {}}}
             for attribute_name in self.table.key_schema:
-                name = attribute_name['AttributeName']
-                request['DeleteRequest']['Key'][name] = item[name]
+                name = attribute_name["AttributeName"]
+                request["DeleteRequest"]["Key"][name] = item[name]
             return request
 
-    ''' execute batch_write_item method which DynamoDB.ServiceResource class has.
+    """ execute batch_write_item method which DynamoDB.ServiceResource class has.
         The BatchWriteItem operation puts or deletes multiple items in one or more tables.
         https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html#DynamoDB.ServiceResource.batch_write_item
     Args:
         request_items (list): request items.
-    '''
+    """
 
     def __batchWriteItem(self, request_items: list) -> None:
-        resutn_consumed_capacity: str = 'INDEXES' if not self.IS_PRO else 'NONE'
+        resutn_consumed_capacity: str = "INDEXES" if not self.IS_PRO else "NONE"
         response = resource.batch_write_item(
-            RequestItems={
-                self.table_name: request_items
-            },
-            ReturnConsumedCapacity=resutn_consumed_capacity
+            RequestItems={self.table_name: request_items},
+            ReturnConsumedCapacity=resutn_consumed_capacity,
         )
-        if 'ConsumedCapacity' in response:
-            self.total_wcu += response['ConsumedCapacity'][0]['CapacityUnits']
-        if 'UnprocessedItems' in response and response['UnprocessedItems'] != {}:
-            unprocessed_items = response['UnprocessedItems'][self.table_name]
+        if "ConsumedCapacity" in response:
+            self.total_wcu += response["ConsumedCapacity"][0]["CapacityUnits"]
+        if "UnprocessedItems" in response and response["UnprocessedItems"] != {}:
+            unprocessed_items = response["UnprocessedItems"][self.table_name]
             if len(unprocessed_items) > 0:
                 self.__batchWriteItem(unprocessed_items)
 
