@@ -8,6 +8,7 @@ root
  └ dynamodb  ... for AWS DynamoDB.
  └ s3  ... for AWS S3.
  └ ses  ... for AWS SES.
+ └ sns  ... for AWS SNS.
 ```
 
 ## How to use
