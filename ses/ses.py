@@ -24,8 +24,7 @@ if "DOCKER_LAMBDA_DEBUG" in os.environ:
     # CASE: Local environment
     environment = "【ローカル】"
     SENDER_NAME = Header(
-        f"{environment}{myconst.cst.SENDER_NAME}".encode(
-            "iso-2022-jp"), "iso-2022-jp"
+        f"{environment}{myconst.cst.SENDER_NAME}".encode("iso-2022-jp"), "iso-2022-jp"
     ).encode()
     CLIENT = boto3.client(
         "ses",
@@ -42,8 +41,7 @@ else:
         # staging environment on AWS
         environment = "【テスト】"
     SENDER_NAME = Header(
-        f"{environment}{myconst.cst.SENDER_NAME}".encode(
-            "iso-2022-jp"), "iso-2022-jp"
+        f"{environment}{myconst.cst.SENDER_NAME}".encode("iso-2022-jp"), "iso-2022-jp"
     ).encode()
     CLIENT = boto3.client("ses", region_name=myconst.cst.REGION)
 SENDER = f"{SENDER_NAME} <{myconst.cst.SENDER_EMAIL}>"
@@ -136,8 +134,6 @@ def _sendMail(RECIPIENTS, SUBJECT, BODY_HTML=None, BODY_TEXT=None, ATTACHMENTS=N
     # Send the email.
     # Provide the contents of the email.
     response = CLIENT.send_raw_email(
-        Source=SENDER, Destinations=RECIPIENTS, RawMessage={
-            "Data": msg.as_string(),
-        }
+        Source=SENDER, Destinations=RECIPIENTS, RawMessage={"Data": msg.as_string()}
     )
     return response
