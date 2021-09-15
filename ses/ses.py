@@ -134,6 +134,6 @@ def _sendMail(RECIPIENTS, SUBJECT, BODY_HTML=None, BODY_TEXT=None, ATTACHMENTS=N
     # Send the email.
     # Provide the contents of the email.
     response = CLIENT.send_raw_email(
-        Source=SENDER, Destinations=RECIPIENTS, RawMessage={"Data": msg.as_string(), }
+        Source=SENDER, Destinations=RECIPIENTS, RawMessage={"Data": msg.as_string()}
     )
     return response
