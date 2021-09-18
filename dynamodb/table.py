@@ -282,18 +282,24 @@ class Table(metaclass=ABCMeta):
             if len(unprocessed_items) > 0:
                 self.__batchWriteItem(unprocessed_items)
 
-
     """ override.
         query items to the table on DynamoDB.
     Args:
         pk (str): partition key.
         p_exp (str, optional): ProjectionExpression of query paramers. e.g. 'country, area')
         f_exp (str, optional): FilterExpression of query paramers.
+        exp_attr_names (dict, optional): ExpressionAttributeNames of query paramers.
     Returns:
         list: the result of a Query operation.
     """
 
-    def _queryTable(self, pk: str, p_exp: str = None, f_exp: str = None,) -> list:
+    def _queryTable(
+        self,
+        pk: str,
+        p_exp: str = None,
+        f_exp: str = None,
+        exp_attr_names: dict = None,
+    ) -> list:
         if not self.IS_PRO:
             # start measuring the run time.
             action_name = f"{self.table_name} query"
@@ -302,11 +308,17 @@ class Table(metaclass=ABCMeta):
 
         if self.query:
             # set params
-            self.query.setter(kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp)
+            self.query.setter(
+                kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp, exp_attr_names=exp_attr_names
+            )
         else:
             # create Query instance
             self.query = Query(
-                self.table.query, kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp
+                self.table.query,
+                kc_exp=kc_exp,
+                p_exp=p_exp,
+                f_exp=f_exp,
+                exp_attr_names=exp_attr_names,
             )
         response = self.query.run()
         if not self.IS_PRO:
