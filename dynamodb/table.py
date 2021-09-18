@@ -59,6 +59,7 @@ class Table(metaclass=ABCMeta):
         self.table_name = table_name
         self.pk_name = pk_name
         self.sk_name = sk_name
+        self.query = None
         self.total_rcu = 0.0
         self.total_read_content_size = 0
         self.total_wcu = 0.0
@@ -76,6 +77,7 @@ class Table(metaclass=ABCMeta):
         del self.total_wcu
         del self.total_read_content_size
         del self.total_rcu
+        del self.query
         del self.sk_name
         del self.pk_name
         del self.table_name
