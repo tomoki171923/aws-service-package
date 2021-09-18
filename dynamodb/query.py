@@ -16,6 +16,7 @@ class Query:
         kc_exp (str): KeyConditionExpression of query paramers.
         p_exp (str, optional): ProjectionExpression of query paramers. e.g. 'country, area')
         f_exp (str, optional): FilterExpression of query paramers.
+        exp_attr_names (dict, optional): ExpressionAttributeNames of query paramers.
     """
 
     def __init__(
@@ -24,9 +25,12 @@ class Query:
         kc_exp: str,
         p_exp: str = None,
         f_exp: str = None,
+        exp_attr_names: dict = None,
     ):
         self.__query = query
-        self.setter(kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp)
+        self.setter(
+            kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp, exp_attr_names=exp_attr_names
+        )
 
     # destructor.
 
@@ -41,14 +45,23 @@ class Query:
         kc_exp (str): KeyConditionExpression of query paramers.
         p_exp (str, optional): ProjectionExpression of query paramers. e.g. 'country, area')
         f_exp (str, optional): FilterExpression of query paramers.
+        exp_attr_names (dict, optional): ExpressionAttributeNames of query paramers.
     """
 
-    def setter(self, kc_exp: str, p_exp: str = None, f_exp: str = None) -> None:
+    def setter(
+        self,
+        kc_exp: str,
+        p_exp: str = None,
+        f_exp: str = None,
+        exp_attr_names: dict = None,
+    ) -> None:
         self.__kwargs = {"KeyConditionExpression": kc_exp}
         if p_exp is not None:
             self.__kwargs["ProjectionExpression"] = p_exp
         if f_exp is not None:
             self.__kwargs["FilterExpression"] = f_exp
+        if exp_attr_names is not None:
+            self.__kwargs["ExpressionAttributeNames"] = exp_attr_names
         self.__next_key = None
         self.__result = list()
 
