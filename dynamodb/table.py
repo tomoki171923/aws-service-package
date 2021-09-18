@@ -5,12 +5,14 @@ from __future__ import annotations
 from abc import ABCMeta, abstractmethod
 import boto3
 import botocore
+from boto3.dynamodb.conditions import Key
 from decimal import Decimal
 import inspect
 from src.layer.base.split import splitList
 from src.layer.base.time_watch import TimeWatch
 from src.layer.logic import myconst
 from src.layer.service.common.environment import isPro, isLocal, isDocker
+from src.layer.service.dynamodb.query import Query
 
 # Initialize DynamoDB connection instance.
 if isLocal():
@@ -280,9 +282,34 @@ class Table(metaclass=ABCMeta):
             if len(unprocessed_items) > 0:
                 self.__batchWriteItem(unprocessed_items)
 
-    # abstract Method. the concrete class has to override this method.
-    # query items to the table on DynamoDB.
 
-    @abstractmethod
-    def _queryTable(self):
-        pass
+    """ override.
+        query items to the table on DynamoDB.
+    Args:
+        pk (str): partition key.
+        p_exp (str, optional): ProjectionExpression of query paramers. e.g. 'country, area')
+        f_exp (str, optional): FilterExpression of query paramers.
+    Returns:
+        list: the result of a Query operation.
+    """
+
+    def _queryTable(self, pk: str, p_exp: str = None, f_exp: str = None,) -> list:
+        if not self.IS_PRO:
+            # start measuring the run time.
+            action_name = f"{self.table_name} query"
+            self.time_watch.start(action_name)
+        kc_exp = Key(self.pk_name).eq(pk)
+
+        if self.query:
+            # set params
+            self.query.setter(kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp)
+        else:
+            # create Query instance
+            self.query = Query(
+                self.table.query, kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp
+            )
+        response = self.query.run()
+        if not self.IS_PRO:
+            # stop measuring the run time & print log.
+            self.time_watch.stop(action_name)
+        return response
