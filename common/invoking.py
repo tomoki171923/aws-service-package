@@ -60,5 +60,8 @@ def __execLambda(
     response: botocore.response.StreamingBody = lambda_client.invoke(
         FunctionName=function, InvocationType=invocationType, Payload=json.dumps(event)
     )
-    payLoad: bytes = response["Payload"].read()
-    return json.loads(payLoad.decode("utf-8"))
+    if invocationType == "RequestResponse":
+        payLoad: bytes = response["Payload"].read()
+        return json.loads(payLoad.decode("utf-8"))
+    else:
+        return 0
