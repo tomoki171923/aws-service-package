@@ -8,8 +8,8 @@ import botocore
 from boto3.dynamodb.conditions import Key
 from decimal import Decimal
 import inspect
-from src.layer.base.split import splitList
-from src.layer.base.time_watch import TimeWatch
+from src.layer.util.split import splitList
+from src.layer.util.time_watch import TimeWatch
 from src.layer.logic import myconst
 from src.layer.service.common.environment import isPro, isLocal, isDocker
 from src.layer.service.dynamodb.query import Query
