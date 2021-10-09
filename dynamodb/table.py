@@ -7,33 +7,34 @@ import boto3
 import botocore
 from boto3.dynamodb.conditions import Key
 from decimal import Decimal
+import os
 import inspect
 from src.layer.util.split import splitList
 from src.layer.util.time_watch import TimeWatch
-from src.layer.logic import myconst
-from src.layer.service.common.environment import isPro, isLocal, isDocker
+from src.layer.service.common.environment import isPro, isLocal
 from src.layer.service.dynamodb.query import Query
+
+
+# Botocore Config
+# The maximum number of connections to keep in a connection pool.
+# If this value is not set, the default value of 10 is used.
+MAX_POOL_CONNECTIONS = os.environ.get("DYNAMODB_MAX_POOL_CONNECTIONS", 50)
 
 # Initialize DynamoDB connection instance.
 if isLocal():
-    endpoint_url = (
-        myconst.cst.END_POINT_URL_DOCKER
-        if isDocker()
-        else myconst.cst.END_POINT_URL_LOCAL
+    #  Local development config
+    LOCAL_END_POINT_URL = os.environ.get(
+        "DYNAMODB_LOCAL_ENDPONIT_URL", "http://host.docker.internal:8000"
     )
     resource = boto3.resource(
         "dynamodb",
-        endpoint_url=endpoint_url,
-        config=botocore.client.Config(
-            max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS
-        ),
+        endpoint_url=LOCAL_END_POINT_URL,
+        config=botocore.client.Config(max_pool_connections=MAX_POOL_CONNECTIONS),
     )
 else:
     resource = boto3.resource(
         "dynamodb",
-        config=botocore.client.Config(
-            max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS
-        ),
+        config=botocore.client.Config(max_pool_connections=MAX_POOL_CONNECTIONS),
     )
 
 """

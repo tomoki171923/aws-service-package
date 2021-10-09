@@ -9,46 +9,26 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.header import Header
 import boto3
-from src.layer.logic import myconst
-from src.layer.service.common.environment import isDev, isSt
+from src.layer.service.common.environment import isLocal, isDev, isSt, isDocker
 
 
 # Charset on the email
 CHARSET = "UTF-8"
 
-# Create a client & set the sender.
-# Reference: address the corrupted text
-# https://qiita.com/danishi/items/769409ebfcd26365ec9e
-environment = ""
-if "DOCKER_LAMBDA_DEBUG" in os.environ:
-    # CASE: Local environment
-    environment = "【ローカル】"
-    SENDER_NAME = Header(
-        f"{environment}{myconst.cst.SENDER_NAME}".encode("iso-2022-jp"), "iso-2022-jp"
-    ).encode()
-    CLIENT = boto3.client(
-        "ses",
-        region_name=myconst.cst.REGION,
-        endpoint_url="http://host.docker.internal:4579",
+# sender info
+SENDER_EMAIL: str = os.environ.get("SES_SENDER_EMAIL", "sample@gmail.com")
+SENDER_NAME: str = os.environ.get("SES_SENDER_NAME", "Sample, Inc.")
+
+if isLocal():
+    #  Local development config
+    LOCAL_END_POINT_URL = os.environ.get(
+        "SES_LOCAL_ENDPONIT_URL", "http://host.docker.internal:4579"
     )
-    CLIENT.verify_email_identity(EmailAddress=myconst.cst.SENDER_EMAIL)
-else:
-    # CASE: AWS environment
-    if isDev():
-        # development environment on AWS
-        environment = "【開発】"
-    elif isSt():
-        # staging environment on AWS
-        environment = "【テスト】"
-    SENDER_NAME = Header(
-        f"{environment}{myconst.cst.SENDER_NAME}".encode("iso-2022-jp"), "iso-2022-jp"
-    ).encode()
-    CLIENT = boto3.client("ses", region_name=myconst.cst.REGION)
-SENDER = f"{SENDER_NAME} <{myconst.cst.SENDER_EMAIL}>"
 
 
 """ send an email in HTML format.
 Args:
+    region_name (str): AWS region where the SES exists.
     recipients (list): recipient's email addresses.
     subject (str): the subject on the email.
     body (str): the body in HTML format on the email.
@@ -58,14 +38,21 @@ Returns:
 """
 
 
-def sendHtmlMail(recipients: list, subject: str, body: str, attachments=None):
+def sendHtmlMail(
+    region_name: str, recipients: list, subject: str, body: str, attachments=None
+) -> dict:
     return _sendMail(
-        RECIPIENTS=recipients, SUBJECT=subject, BODY_HTML=body, ATTACHMENTS=attachments
+        region_name=region_name,
+        recipients=recipients,
+        subject=subject,
+        body_html=body,
+        attachments=attachments,
     )
 
 
 """ send an email in TEXT format.
 Args:
+    region_name (str): AWS region where the SES exists.
     recipients (list): recipient's email addresses.
     subject (str): the subject on the email.
     body (str): the body in TEXT format on the email.
@@ -75,50 +62,86 @@ Returns:
 """
 
 
-def sendTextMail(recipients: list, subject: str, body: str, attachments=None):
+def sendTextMail(
+    region_name: str, recipients: list, subject: str, body: str, attachments=None
+) -> dict:
     return _sendMail(
-        RECIPIENTS=recipients, SUBJECT=subject, BODY_TEXT=body, ATTACHMENT=attachments
+        region_name=region_name,
+        recipients=recipients,
+        subject=subject,
+        body_text=body,
+        ATTACHMENT=attachments,
     )
 
 
 """ send an email.
 Args:
-    RECIPIENTS (list): recipient's email addresses.
-    SUBJECT (str): the subject on the email.
-    BODY_HTML (str): the body in HTML format on the email.
-    BODY_TEXT (str): the body in TEXT format on the email.
-    ATTACHMENTS (list): the path of attachment files.
+    region_name (str): AWS region where the SES exists.
+    recipients (list): recipient's email addresses.
+    subject (str): the subject on the email.
+    body_html (str): the body in HTML format on the email.
+    body_text (str): the body in TEXT format on the email.
+    attachments (list): the path of attachment files.
 Returns:
     dict: the response from the SendRawEmail action.
 """
 
 
-def _sendMail(RECIPIENTS, SUBJECT, BODY_HTML=None, BODY_TEXT=None, ATTACHMENTS=None):
+def _sendMail(
+    region_name: str,
+    recipients: list,
+    subject: str,
+    body_html: str = None,
+    body_text: str = None,
+    attachments: list = None,
+) -> dict:
+    # Create ses client.
+    if isDocker():
+        client = boto3.client(
+            "ses", region_name=region_name, endpoint_url=LOCAL_END_POINT_URL,
+        )
+        client.verify_email_identity(EmailAddress=SENDER_EMAIL)
+    else:
+        client = boto3.client("ses", region_name=region_name)
+
+    # Create sender info
+    environment: str = ""
+    if isLocal() is True:
+        environment = "[local]"
+    if isDev() is True:
+        environment = "[develop]"
+    if isSt() is True:
+        environment = "[staging]"
+    sender_name = Header(
+        f"{environment}{SENDER_NAME}".encode("iso-2022-jp"), "iso-2022-jp"
+    ).encode()
+    sender: str = f"{sender_name} <{SENDER_EMAIL}>"
+
     # Create a multipart/mixed parent container.
     msg = MIMEMultipart("mixed")
     # Add subject, from and to lines.
-    msg["Subject"] = SUBJECT
-    msg["From"] = SENDER
-    msg["To"] = ", ".join(RECIPIENTS)
+    msg["subject"] = subject
+    msg["From"] = sender
+    msg["To"] = ", ".join(recipients)
 
     # Create a multipart/alternative child container.
     msg_body = MIMEMultipart("alternative")
 
     # Set html body.
-    if BODY_HTML is not None:
+    if body_html is not None:
         # The HTML body of the email.
-        htmlpart = MIMEText(BODY_HTML.encode(CHARSET), "html", CHARSET)
+        htmlpart = MIMEText(body_html.encode(CHARSET), "html", CHARSET)
         msg_body.attach(htmlpart)
 
     # Set text body.
-    if BODY_TEXT is not None:
+    if body_text is not None:
         # The email body for recipients with non-HTML email clients.
-        textpart = MIMEText(BODY_TEXT.encode(CHARSET), "plain", CHARSET)
+        textpart = MIMEText(body_text.encode(CHARSET), "plain", CHARSET)
         msg_body.attach(textpart)
 
     # Attach files.
-    if ATTACHMENTS is not None and len(ATTACHMENTS) != 0:
-        for attachment in ATTACHMENTS:
+    if attachments is not None and len(attachments) != 0:
+        for attachment in attachments:
             att = MIMEApplication(open(attachment, "rb").read())
             att.add_header(
                 "Content-Disposition",
@@ -133,7 +156,7 @@ def _sendMail(RECIPIENTS, SUBJECT, BODY_HTML=None, BODY_TEXT=None, ATTACHMENTS=N
 
     # Send the email.
     # Provide the contents of the email.
-    response = CLIENT.send_raw_email(
-        Source=SENDER, Destinations=RECIPIENTS, RawMessage={"Data": msg.as_string()}
+    response = client.send_raw_email(
+        Source=sender, Destinations=recipients, RawMessage={"Data": msg.as_string()}
     )
     return response
