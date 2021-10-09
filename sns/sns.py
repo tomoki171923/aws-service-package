@@ -9,7 +9,7 @@ from src.layer.service.common.environment import isPro, isDocker
 
 """ send an email in TEXT format.
 Args:
-    region_name (str): AWS region where the SNS is.
+    region_name (str): AWS region where the SNS exists.
     topic_arn (str): SNS topic arn
     subject (str): the subject on the email.
     message (str): the body in TEXT format on the email.

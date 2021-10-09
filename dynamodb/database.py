@@ -2,7 +2,12 @@
 
 import boto3
 import botocore
-from src.layer.logic import myconst
+import os
+
+# Botocore Config
+# The maximum number of connections to keep in a connection pool.
+# If this value is not set, the default value of 10 is used.
+MAX_POOL_CONNECTIONS = os.environ.get("DYNAMODB_MAX_POOL_CONNECTIONS", 50)
 
 """
 This class is an abstract class at AWS DynamoDB Table.
@@ -17,27 +22,27 @@ class Database:
                 "dynamodb",
                 endpoint_url=endpoint_url,
                 config=botocore.client.Config(
-                    max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS
+                    max_pool_connections=MAX_POOL_CONNECTIONS
                 ),
             )
             self.resource = boto3.resource(
                 "dynamodb",
                 endpoint_url=endpoint_url,
                 config=botocore.client.Config(
-                    max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS
+                    max_pool_connections=MAX_POOL_CONNECTIONS
                 ),
             )
         else:
             self.client = boto3.client(
                 "dynamodb",
                 config=botocore.client.Config(
-                    max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS
+                    max_pool_connections=MAX_POOL_CONNECTIONS
                 ),
             )
             self.resource = boto3.resource(
                 "dynamodb",
                 config=botocore.client.Config(
-                    max_pool_connections=myconst.cst.MAX_POOL_CONNECTIONS
+                    max_pool_connections=MAX_POOL_CONNECTIONS
                 ),
             )
 
