@@ -77,7 +77,8 @@ class Table(metaclass=ABCMeta):
         del self.total_wcu
         del self.total_read_content_size
         del self.total_rcu
-        del self.query
+        if self.query is not None:
+            del self.query
         del self.sk_name
         del self.pk_name
         del self.table_name
@@ -308,12 +309,7 @@ class Table(metaclass=ABCMeta):
             self.time_watch.start(action_name)
         kc_exp = Key(self.pk_name).eq(pk)
 
-        if self.query:
-            # set params
-            self.query.setter(
-                kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp, exp_attr_names=exp_attr_names
-            )
-        else:
+        if self.query is None:
             # create Query instance
             self.query = Query(
                 self.table.query,
@@ -322,6 +318,12 @@ class Table(metaclass=ABCMeta):
                 f_exp=f_exp,
                 exp_attr_names=exp_attr_names,
             )
+        else:
+            # set params
+            self.query.setter(
+                kc_exp=kc_exp, p_exp=p_exp, f_exp=f_exp, exp_attr_names=exp_attr_names
+            )
+
         response = self.query.run()
         if not self.IS_PRO:
             # stop measuring the run time & print log.
