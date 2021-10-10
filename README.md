@@ -15,7 +15,18 @@ root
 ## unit test
 
 ```
-docker-compose run --rm py38 python -m unittest discover -s tests -p "ut_*.py"
+python -m unittest discover -s tests -p "ut_*.py"
+```
+
+or
+
+```
+(local)
+docker-compose run --rm py38 bash
+(container)
+vi ~/.aws/credentials
+export AWS_PROFILE=xxx
+python -m unittest discover -s tests -p "ut_*.py"
 ```
 
 ## code format

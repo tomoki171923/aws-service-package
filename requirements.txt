@@ -2,7 +2,7 @@ boto3==1.18.58
 botocore==1.21.58
 jmespath==0.10.0
 python-dateutil==2.8.2
-pyunit @ git+https://github.com/tomoki171923/python-util@865373a1095add4fedc183b911336a657c48ec3f
+pyutil @ git+https://github.com/tomoki171923/python-util@a1e12a30b353b0e36f10e40ade282748160d2889
 s3transfer==0.5.0
 six==1.16.0
 urllib3==1.26.7
