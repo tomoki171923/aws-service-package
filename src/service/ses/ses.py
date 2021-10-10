@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.header import Header
 import boto3
-from src.layer.service.common.environment import isLocal, isDev, isSt, isDocker
+from service.lambdalayer.environment import isLocal, isDev, isSt, isDocker
 
 
 # Charset on the email
