@@ -98,7 +98,9 @@ def _sendMail(
     # Create ses client.
     if isDocker():
         client = boto3.client(
-            "ses", region_name=region_name, endpoint_url=LOCAL_END_POINT_URL,
+            "ses",
+            region_name=region_name,
+            endpoint_url=LOCAL_END_POINT_URL,
         )
         client.verify_email_identity(EmailAddress=SENDER_EMAIL)
     else:

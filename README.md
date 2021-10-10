@@ -15,9 +15,7 @@ root
 ## unit test
 
 ```
-(e.g.)
-cd s3
-python ut_bucket.py
+docker-compose run --rm py38 python -m unittest discover -s tests -p "ut_*.py"
 ```
 
 ## code format

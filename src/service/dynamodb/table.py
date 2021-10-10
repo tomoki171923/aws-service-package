@@ -169,7 +169,7 @@ class Table(metaclass=ABCMeta):
 
     # log total WCU, RCU and loaded contents size on the table.
 
-    def loggerPerformance(self) -> None:
+    def reportPerformance(self) -> None:
         print("************ Performance Log ************")
         print(f"table: {self.table_name}")
         print(f"total_rcu: {self.total_rcu}")

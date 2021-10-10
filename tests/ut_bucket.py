@@ -2,7 +2,7 @@ import unittest
 import json
 import os
 
-from bucket import Bucket
+from src.service.s3.bucket import Bucket
 
 
 class UtEBucket(unittest.TestCase):
@@ -87,7 +87,3 @@ class UtEBucket(unittest.TestCase):
         self.assertIs(type(result), dict)
         # value test
         self.assertEqual(result["ResponseMetadata"]["HTTPStatusCode"], expected_result)
-
-
-if __name__ == "__main__":
-    unittest.main(failfast=True, exit=False)
