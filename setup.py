@@ -12,10 +12,10 @@ with open("README.md", "r") as fh:
 
 
 setup(
-    name="aws-service",
+    name="aws-service-package",
     version="1.6",
     author="tomoki",
-    url="https://github.com/tomoki171923/aws-lambda-layer",
+    url="https://github.com/tomoki171923/aws-service-package",
     description="python utility code.",
     long_description=long_description,
     long_description_content_type="text/markdown",

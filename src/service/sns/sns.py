@@ -4,7 +4,7 @@ This module has some functions to send an email using AWS SNS.
 """
 
 import boto3
-from service.lambdalayer.environment import isPro, isDocker
+from ..lambdalib.environment import isPro, isDocker
 
 
 """ send an email in TEXT format.

@@ -11,8 +11,8 @@ import os
 import inspect
 from pyutil.split import splitList
 from pyutil.time_watch import TimeWatch
-from service.lambdalayer.environment import isPro, isLocal
-from service.dynamodb.query import Query
+from ..lambdalib.environment import isLocal, isDocker, isPro
+from .query import Query
 
 
 # Botocore Config
@@ -21,21 +21,18 @@ from service.dynamodb.query import Query
 MAX_POOL_CONNECTIONS = os.environ.get("DYNAMODB_MAX_POOL_CONNECTIONS", 50)
 
 # Initialize DynamoDB connection instance.
-if isLocal():
-    #  Local development config
-    LOCAL_END_POINT_URL = os.environ.get(
-        "DYNAMODB_LOCAL_ENDPONIT_URL", "http://host.docker.internal:8000"
+resource_kargs: dict = {
+    "config": botocore.client.Config(max_pool_connections=MAX_POOL_CONNECTIONS)
+}
+if isDocker():
+    resource_kargs["endpoint_url"] = os.environ.get(
+        "DYNAMODB_ENDPONIT_URL", "http://host.docker.internal:8000"
     )
-    resource = boto3.resource(
-        "dynamodb",
-        endpoint_url=LOCAL_END_POINT_URL,
-        config=botocore.client.Config(max_pool_connections=MAX_POOL_CONNECTIONS),
+elif isLocal():
+    resource_kargs["endpoint_url"] = os.environ.get(
+        "DYNAMODB_ENDPONIT_URL", "http://localhost:8000"
     )
-else:
-    resource = boto3.resource(
-        "dynamodb",
-        config=botocore.client.Config(max_pool_connections=MAX_POOL_CONNECTIONS),
-    )
+resource = boto3.resource("dynamodb", **resource_kargs)
 
 """
 This class is an abstract class at AWS DynamoDB Table.
