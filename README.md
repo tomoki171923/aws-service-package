@@ -2,22 +2,22 @@
 
 Python Packages as AWS Lambda Layers to operate AWS native services. They have basic functions or abstract classes of each service.
 
-```
-root
- └ cloudwatch  ... for AWS Cloudwatch.
- └ common  ... for AWS Lambda.
- └ dynamodb  ... for AWS DynamoDB.
- └ s3  ... for AWS S3.
- └ ses  ... for AWS SES.
- └ sns  ... for AWS SNS.
-```
-
 ## unit test
 
 ```
-(e.g.)
-cd s3
-python ut_bucket.py
+docker-compose up
+python -m unittest discover -s tests -p "ut_dynamodb_database.py"
+```
+
+or
+
+```
+(local)
+docker-compose run --rm py38 bash
+(container)
+vi ~/.aws/credentials
+export AWS_PROFILE=xxx
+python -m unittest discover -s tests -p "ut_*.py"
 ```
 
 ## code format

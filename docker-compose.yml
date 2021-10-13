@@ -1,0 +1,35 @@
+version: '3'
+services:
+
+  # dynamodb docker container
+  dynamodb:
+    image: amazon/dynamodb-local
+    container_name: local_dynamodb
+    volumes:
+      # host : container
+      - "./local/dynamodb:/data"
+    ports:
+      - "8000:8000"
+    command: "-jar DynamoDBLocal.jar -port 8000 -sharedDb -dbPath /data"
+    networks:
+      - back-tier
+      - dynamodb-tier
+
+  # dynamodb admin docker container
+  dynamodb-admin:
+    image: aaronshaf/dynamodb-admin:latest
+    container_name: local_dynamodb-admin
+    environment:
+      - DYNAMO_ENDPOINT=dynamodb:8000
+    ports:
+      - 8001:8001
+    depends_on:
+      - dynamodb
+    networks:
+      - dynamodb-tier
+
+# network
+networks:
+  back-tier:
+  dynamodb-tier:
+    driver: bridge

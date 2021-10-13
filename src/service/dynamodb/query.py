@@ -8,7 +8,7 @@ from typing import Callable
 
 
 class Query:
-    """ constructor
+    """constructor
     Ref:
         https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/dynamodb.html#DynamoDB.Table.query
     Args:

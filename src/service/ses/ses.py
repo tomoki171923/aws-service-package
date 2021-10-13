@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.mime.application import MIMEApplication
 from email.header import Header
 import boto3
-from src.layer.service.common.environment import isLocal, isDev, isSt, isDocker
+from ..lambdalib.environment import isLocal, isDev, isSt, isDocker
 
 
 # Charset on the email
@@ -98,7 +98,9 @@ def _sendMail(
     # Create ses client.
     if isDocker():
         client = boto3.client(
-            "ses", region_name=region_name, endpoint_url=LOCAL_END_POINT_URL,
+            "ses",
+            region_name=region_name,
+            endpoint_url=LOCAL_END_POINT_URL,
         )
         client.verify_email_identity(EmailAddress=SENDER_EMAIL)
     else:

@@ -51,7 +51,7 @@ Returns:
 
 
 def isLocal():
-    return os.environ.get("AWS_LAMBDA_ENV", "no_env") == "LOCAL"
+    return os.environ.get("AWS_LAMBDA_ENV", "no_env") == "local"
 
 
 """ Checking whether this environment is a docker container
