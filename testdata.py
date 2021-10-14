@@ -1,11 +1,8 @@
 # the following is not necessary if Python version is 3.9 or over.
 from __future__ import annotations
-import os
 
-from src.service.dynamodb.table import Table
 from src.service.dynamodb.database import Database
-from boto3.dynamodb.conditions import Attr
-import unittest
+from src.service.dynamodb.table import Table
 
 TEST_TABLE_NAME = "UtTable"
 TEST_TABLE = {
@@ -77,54 +74,14 @@ class UtTable(Table):
         self.put(data)
 
 
-class UtDynamodb(unittest.TestCase):
+database = Database()
+database.createTable(TEST_TABLE)
 
-    # constructor of unittest class
-    @classmethod
-    def setUpClass(self):
-        self.database = Database()
-        self.database.createTable(TEST_TABLE)
 
-    # destructor of unittest class
-    @classmethod
-    def tearDownClass(self):
-        pass
-        # self.database.deleteTable(TEST_TABLE_NAME)
+table = UtTable()
 
-    # the action before each of tests is executed in unittest
-    def setUp(self):
-        pass
 
-    # the action after each of tests is executed in unittest
-    def tearDown(self):
-        pass
+testdata: list = list()
 
-    def test_put_1(self):
-        pass
-
-    def test_put_2(self):
-        pass
-
-    def test_delete_1(self):
-        pass
-
-    def test_delete_2(self):
-        pass
-
-    def test_update_1(self):
-        pass
-
-    def test_update_2(self):
-        pass
-
-    def test_find(self):
-        pass
-
-    def test_where_1(self):
-        pass
-
-    def test_where_2(self):
-        pass
-
-    def test_where_3(self):
-        pass
+for i in 30:
+    print(i)
