@@ -3,6 +3,7 @@ from __future__ import annotations
 
 from src.service.dynamodb.database import Database
 from src.service.dynamodb.table import Table
+from boto3.dynamodb.conditions import Attr
 
 TEST_TABLE_NAME = "UtTable"
 TEST_TABLE = {
