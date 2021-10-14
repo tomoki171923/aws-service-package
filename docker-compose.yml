@@ -1,6 +1,24 @@
 version: '3'
 services:
 
+  unittest:
+    container_name: 'unittest'
+    build:
+      context: .
+      dockerfile: Dockerfile
+    command: python -m unittest discover -s tests -p "ut_dynamodb_database.py"
+    environment:
+      AWS_ACCESS_KEY_ID: dummy
+      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_REGION: us-east-1
+      AWS_DEFAULT_REGION: us-east-1
+    volumes:
+      - ./:/usr/src/app
+    depends_on:
+      - dynamodb
+    networks:
+      - back-tier
+
   # dynamodb docker container
   dynamodb:
     image: amazon/dynamodb-local

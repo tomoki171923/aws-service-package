@@ -5,8 +5,7 @@ Python Packages as AWS Lambda Layers to operate AWS native services. They have b
 ## unit test
 
 ```
-docker-compose up
-python -m unittest discover -s tests -p "ut_dynamodb_database.py"
+docker-compose run --rm unittest python -m unittest discover -s tests -p "ut_dynamodb_database.py"
 ```
 
 or
