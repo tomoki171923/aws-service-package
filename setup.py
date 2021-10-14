@@ -6,14 +6,10 @@ from os.path import splitext
 with open("README.md", "r") as fh:
     long_description = fh.read()
 
-
-# def _requires_from_file(filename):
-#    return open(filename).read().splitlines()
-
-
 setup(
     name="aws-service-package",
-    version="1.6",
+    version_config=True,
+    setup_requires=["setuptools-git-versioning"],
     author="tomoki",
     url="https://github.com/tomoki171923/aws-service-package",
     description="python utility code.",
@@ -25,7 +21,10 @@ setup(
         "Operating System :: OS Independent",
     ],
     python_requires=">=3.8",
-    # install_requires=_requires_from_file("requirements.txt"),
+    install_requires=[
+        "boto3>=1.18",
+        "pyutil @ git+ssh://git@github.com/tomoki171923/python-util.git",
+    ],
     packages=find_packages("src"),
     package_dir={"": "src"},
     py_modules=[splitext(basename(path))[0] for path in glob("src/*.py")],
