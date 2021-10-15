@@ -5,7 +5,7 @@ Python package. It helps operate AWS native services. It has basic functions or 
 ## how to install
 
 ```
-pip install git+https://github.com/tomoki171923/aws-service-package
+pip install git+https://github.com/tomoki171923/aws-service-package#egg=awspack
 ```
 
 ## unit test
