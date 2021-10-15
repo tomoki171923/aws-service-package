@@ -76,7 +76,7 @@ class UtDynamodbDatabase(unittest.TestCase):
         self.assertEqual(actual["TableDescription"]["TableName"], expected)
 
         # check the table exists
-        expected2: list = [TEST_TABLE_NAME]
+        expected2: list = [TEST_TABLE_NAME, "UtTable"]
         actual2: dict = self.database.getTableList()
         # type test
         self.assertIs(type(actual2), list)
@@ -95,7 +95,7 @@ class UtDynamodbDatabase(unittest.TestCase):
         self.assertEqual(actual["TableDescription"]["TableName"], expected)
 
         # check the table does't exist.
-        expected2: list = []
+        expected2: list = ["UtTable"]
         actual2: dict = self.database.getTableList()
         # type test
         self.assertIs(type(actual2), list)
