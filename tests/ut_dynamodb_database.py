@@ -2,8 +2,6 @@
 from __future__ import annotations
 import os
 
-os.environ["AWS_LAMBDA_ENV"] = "local"
-
 from src.service.dynamodb.database import Database
 import unittest
 

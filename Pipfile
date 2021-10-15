@@ -13,4 +13,5 @@ pyutil = {git = "https://github.com/tomoki171923/python-util", editable = true, 
 python_version = "3.8"
 
 [scripts]
-test = 'python -m unittest discover -s tests -p "ut_dynamodb_database.py"'
+test_dynamodb = 'python -m unittest discover -s tests -p "ut_dynamodb_database.py"'
+test_lambdalib = 'python -m unittest discover -s tests -p "ut_lambdalib_environment.py"'
