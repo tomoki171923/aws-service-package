@@ -2,6 +2,12 @@
 
 Python Packages as AWS Lambda Layers to operate AWS native services. They have basic functions or abstract classes of each service.
 
+## how to install
+
+```
+pip install git+https://github.com/tomoki171923/aws-service-package
+```
+
 ## unit test
 
 ```
