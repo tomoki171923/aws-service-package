@@ -1,6 +1,6 @@
 # aws-service-package
 
-Python Packages as AWS Lambda Layers to operate AWS native services. They have basic functions or abstract classes of each service.
+Python package. It helps operate AWS native services. It has basic functions or abstract classes of each service.
 
 ## how to install
 
