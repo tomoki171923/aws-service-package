@@ -2,7 +2,7 @@ import unittest
 import json
 import os
 
-from src.service.s3.bucket import Bucket
+from src.awspack.s3.bucket import Bucket
 
 
 class UtEBucket(unittest.TestCase):

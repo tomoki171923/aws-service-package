@@ -3,8 +3,8 @@ from __future__ import annotations
 import os
 import datetime
 from decimal import Decimal
-from src.service.dynamodb.table import Table
-from src.service.dynamodb.database import Database
+from src.awspack.dynamodb.table import Table
+from src.awspack.dynamodb.database import Database
 from boto3.dynamodb.conditions import Attr
 from pyutil.datetime_jp import today, pastDate, futureDate
 import unittest
