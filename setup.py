@@ -7,12 +7,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="aws-service-package",
+    name="awspack",
     version_config=True,
     setup_requires=["setuptools-git-versioning"],
     author="tomoki",
     url="https://github.com/tomoki171923/aws-service-package",
-    description="python utility code.",
+    description="this package helps operate AWS native services.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
@@ -23,7 +23,7 @@ setup(
     python_requires=">=3.8",
     install_requires=[
         "boto3>=1.18",
-        "pyutil @ git+ssh://git@github.com/tomoki171923/python-util.git",
+        "pyutil @ git+https://github.com/tomoki171923/python-util.git#egg=pyutil",
     ],
     packages=find_packages("src"),
     package_dir={"": "src"},
