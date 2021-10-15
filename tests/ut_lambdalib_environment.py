@@ -2,7 +2,7 @@ import unittest
 import json
 import os
 
-from src.service.lambdalib.environment import (
+from src.awspack.lambdalib.environment import (
     isDevOrSt,
     isLocal,
     isDocker,

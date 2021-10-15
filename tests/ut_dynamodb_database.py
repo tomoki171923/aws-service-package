@@ -2,7 +2,7 @@
 from __future__ import annotations
 import os
 
-from src.service.dynamodb.database import Database
+from src.awspack.dynamodb.database import Database
 import unittest
 
 TEST_TABLE_NAME = "UtDatabaseTable"
