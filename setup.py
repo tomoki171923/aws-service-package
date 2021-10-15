@@ -7,12 +7,12 @@ with open("README.md", "r") as fh:
     long_description = fh.read()
 
 setup(
-    name="aws-service-package",
+    name="awspack",
     version_config=True,
     setup_requires=["setuptools-git-versioning"],
     author="tomoki",
     url="https://github.com/tomoki171923/aws-service-package",
-    description="python utility code.",
+    description="this package helps operate AWS native services.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     classifiers=[
