@@ -1,5 +1,4 @@
 import unittest
-import json
 import os
 
 from src.awspack.lambdalib.environment import (
