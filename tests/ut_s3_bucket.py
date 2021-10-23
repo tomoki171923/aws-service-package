@@ -26,64 +26,64 @@ class UtEBucket(unittest.TestCase):
     def test_01_upload(self):
         ut_arg: str = "tests/ut_test.txt"
         ut_arg2: str = "tests/ut_test.txt"
-        expected_result = None
-        result = self.bucket.upload(ut_arg, ut_arg2)
+        expected = None
+        actual = self.bucket.upload(ut_arg, ut_arg2)
         # value test
-        self.assertEqual(result, expected_result)
+        self.assertEqual(actual, expected)
 
     def test_02_create(self):
         ut_arg: str = "private"
         ut_arg2: str = json.dumps({"ut": "test"})
         ut_arg3: str = "tests/ut_test.json"
-        expected_result = 200
-        result = self.bucket.create(acl=ut_arg, body=ut_arg2, path=ut_arg3)
+        expected = 200
+        actual = self.bucket.create(acl=ut_arg, body=ut_arg2, path=ut_arg3)
         # type test
-        self.assertIs(type(result), dict)
+        self.assertIs(type(actual), dict)
         # value test
-        self.assertEqual(result["ResponseMetadata"]["HTTPStatusCode"], expected_result)
+        self.assertEqual(actual["ResponseMetadata"]["HTTPStatusCode"], expected)
 
     def test_03_ls(self):
         ut_arg: str = "tests/"
-        expected_result = "tests/ut_test.json"
-        expected_result2 = "tests/ut_test.txt"
-        result = self.bucket.ls(path=ut_arg)
+        expected = "tests/ut_test.json"
+        expected2 = "tests/ut_test.txt"
+        actual = self.bucket.ls(path=ut_arg)
         # type test
-        self.assertIs(type(result), list)
+        self.assertIs(type(actual), list)
         # value test
-        self.assertEqual(result[0]["Key"], expected_result)
-        self.assertEqual(result[1]["Key"], expected_result2)
+        self.assertEqual(actual[0]["Key"], expected)
+        self.assertEqual(actual[1]["Key"], expected2)
 
     def test_04_get(self):
         ut_arg: str = "tests/ut_test.json"
-        expected_result = 200
-        result = self.bucket.get(path=ut_arg)
+        expected = 200
+        actual = self.bucket.get(path=ut_arg)
         # type test
-        self.assertIs(type(result), dict)
+        self.assertIs(type(actual), dict)
         # value test
-        self.assertEqual(result["ResponseMetadata"]["HTTPStatusCode"], expected_result)
+        self.assertEqual(actual["ResponseMetadata"]["HTTPStatusCode"], expected)
 
     def test_05_getContents(self):
         ut_arg: str = "tests/ut_test.json"
-        expected_result = '{"ut": "test"}'
-        result = self.bucket.getContents(path=ut_arg)
+        expected = '{"ut": "test"}'
+        actual = self.bucket.getContents(path=ut_arg)
         # type test
-        self.assertIs(type(result), str)
+        self.assertIs(type(actual), str)
         # value test
-        self.assertEqual(result, expected_result)
+        self.assertEqual(actual, expected)
 
     def test_06_download(self):
         ut_arg: str = "./tests/ut_test.json"
         ut_arg2: str = "tests/ut_test.json"
-        expected_result = None
-        result = self.bucket.download(local_path=ut_arg, s3_path=ut_arg2)
+        expected = None
+        actual = self.bucket.download(local_path=ut_arg, s3_path=ut_arg2)
         # value test
-        self.assertEqual(result, expected_result)
+        self.assertEqual(actual, expected)
 
     def test_07_delete(self):
         ut_arg: str = "tests/ut_test.json"
-        expected_result = 204
-        result = self.bucket.delete(path=ut_arg)
+        expected = 204
+        actual = self.bucket.delete(path=ut_arg)
         # type test
-        self.assertIs(type(result), dict)
+        self.assertIs(type(actual), dict)
         # value test
-        self.assertEqual(result["ResponseMetadata"]["HTTPStatusCode"], expected_result)
+        self.assertEqual(actual["ResponseMetadata"]["HTTPStatusCode"], expected)
