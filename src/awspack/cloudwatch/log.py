@@ -19,7 +19,7 @@ Ref:
 
 def setRetentionDays(days: int, logGroupName: str = None) -> None:
     if logGroupName is None:
-        loggroups = getAllLogGroups()
+        loggroups = getLogGroups()
         for loggroup in loggroups:
             client.put_retention_policy(
                 logGroupName=loggroup["logGroupName"], retentionInDays=days
@@ -28,24 +28,13 @@ def setRetentionDays(days: int, logGroupName: str = None) -> None:
         client.put_retention_policy(logGroupName=logGroupName, retentionInDays=days)
 
 
-""" get all cloudwatch log groups.
+""" get cloudwatch log groups.
 Args:
-    next_token(str, optional): A token to resume pagination.
+    log_group_name_prefix (str, optional): The prefix of the log group name.
+    next_token (str, optional): A token to resume pagination.
 Ref:
     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/logs.html#CloudWatchLogs.Client.describe_log_groups
 """
-
-
-def getAllLogGroups(next_token: str = None) -> list[dict]:
-    loggroups: list = list()
-    if next_token:
-        result = client.describe_log_groups(nextToken=next_token)
-    else:
-        result = client.describe_log_groups()
-    loggroups.extend(result["logGroups"])
-    if len(result["logGroups"]) > 0 and "nextToken" in result:
-        loggroups.extend(getAllLogGroups(result["nextToken"]))
-    return loggroups
 
 
 def getLogGroups(
