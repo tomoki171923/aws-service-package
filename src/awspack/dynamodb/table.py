@@ -90,25 +90,19 @@ class Table(metaclass=ABCMeta):
         dict: the result of a Query operation.
     """
 
-    def find(self, pk: str, sk: str) -> dict:
+    def find(self, pk: str, sk: str) -> None | dict:
         response = self.table.get_item(Key={self.pk_name: pk, self.sk_name: sk})
         key = "Item"
         if key not in response:
             return None
         return self._filter(response, key)
 
-    # abstract Method. the concrete class has to override this method.
-    # finding items.
+    """ abstract Method. the concrete class has to override this method.
+        finding items.
+    """
 
     @abstractmethod
     def where(self):
-        pass
-
-    # abstract Method. the concrete class has to override this method.
-    # updating items.
-
-    @abstractmethod
-    def update(self):
         pass
 
     """ put an item or items into the table.
@@ -164,7 +158,18 @@ class Table(metaclass=ABCMeta):
             # stop measuring the run time & print log.
             self.time_watch.stop(action_name)
 
-    # log total WCU, RCU and loaded contents size on the table.
+    """ updating an item or items.
+    Args:
+        data (dict or list): an item or items putting into the table.
+    """
+
+    def update(self, data: list | dict) -> None:
+        self.delete(data)
+        self.put(data)
+
+    """ log total WCU, RCU and loaded contents size on the table.
+
+    """
 
     def reportPerformance(self) -> None:
         print("************ Performance Log ************")

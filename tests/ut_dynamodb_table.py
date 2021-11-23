@@ -76,10 +76,6 @@ class UtTable(Table):
         )
         return result
 
-    def update(self, data: list | dict) -> None:
-        self.delete(data)
-        self.put(data)
-
 
 def testdata60() -> list:
     utitems: list = list()
