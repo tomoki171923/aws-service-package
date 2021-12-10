@@ -2,23 +2,29 @@
 
 Python package. It helps operate AWS native services. It has basic functions or abstract classes of each service.
 
-## how to install
+## For User
+
+### Install
 
 ```
 pip install git+https://github.com/tomoki171923/aws-service-package#egg=awspack
 ```
 
-## unit test
+### Usage
+
+```python
+from awspack.s3.bucket import Bucket
+
+if __name__ == "__main__":
+    bucket = Bucket("tf-test-private-bucket")
+    # upload a file in local into s3 bucket.
+    bucket.upload("./file.txt", '20210101/file.tct')
+```
+
+## For Contributor
+
+### Unit Test
 
 ```
 docker-compose up unittest
-```
-
-## pre-commit
-
-```
-brew install pre-commit
-pre-commit sample-config > .pre-commit-config.yaml
-vi .pre-commit-config.yaml
-pre-commit install
 ```
