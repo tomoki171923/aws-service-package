@@ -5,7 +5,7 @@ name = "pypi"
 
 [packages]
 boto3 = ">=1.18"
-pyutil = {git = "https://github.com/tomoki171923/python-util", editable = true, ref = "main"}
+pyutil = {git = "https://github.com/tomoki171923/python-util.git", editable = true, ref = "main"}
 
 [dev-packages]
 
