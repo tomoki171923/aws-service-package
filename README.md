@@ -23,8 +23,33 @@ if __name__ == "__main__":
 
 ## For Contributor
 
+### Pre-Commit
+
+```bash
+brew install pre-commit
+pre-commit install
+```
+
+### Build
+
+```bash
+docker-compose build
+```
+
+### Add Python Package
+
+```bash
+docker-compose run --rm unittest pipenv install PACKAGE_NAME
+```
+
+### Update Python Packages
+
+```bash
+docker-compose run --rm unittest pipenv update
+```
+
 ### Unit Test
 
-```
+```bash
 docker-compose up unittest
 ```

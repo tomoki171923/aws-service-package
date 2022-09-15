@@ -20,7 +20,7 @@ setup(
         "License :: OSI Approved :: MIT License",
         "Operating System :: OS Independent",
     ],
-    python_requires=">=3.8",
+    python_requires=">=3.9",
     install_requires=[
         "boto3>=1.18",
         "pyutil @ git+https://github.com/tomoki171923/python-util.git#egg=pyutil",
