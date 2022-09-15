@@ -8,8 +8,10 @@ from src.awspack.dynamodb.table import Table
 
 # from src.awspack.dynamodb.database import Database
 from boto3.dynamodb.conditions import Attr
-from pyutil.datetime_jp import today, pastDate, futureDate
+from pyutil.date_time import DateTime
 import unittest
+
+date_time: DateTime = DateTime()
 
 TEST_TABLE_NAME = "UtTable"
 TEST_TABLE = {
@@ -78,8 +80,8 @@ class UtTable(Table):
 
 
 def testdata60() -> list:
-    utitems: list = list()
-    thisdate = datetime.date(2021, 1, 1)
+    ut_items: list = list()
+    this_date: datetime.date = datetime.date(2021, 1, 1)
     for i in range(60):
         category: str
         name: str
@@ -88,22 +90,22 @@ def testdata60() -> list:
             category = "Food"
             name = f"{category}{i}"
             price = 1000 + i * 10
-            date = futureDate(thisdate, i)
+            date = date_time.futureDate(this_date, i)
         elif 10 <= i < 20:
             category = "Book"
             name = f"{category}{i}"
             price = 1000 + i * 100
-            date = futureDate(thisdate, i)
+            date = date_time.futureDate(this_date, i)
         elif 20 <= i < 30:
             category = "Tablet"
             name = f"{category}{i}"
             price = 10000 + i * 1000
-            date = pastDate(thisdate, i)
+            date = date_time.pastDate(this_date, i)
         else:
             category = "PC"
             name = f"{category}{i}"
             price = 200000 + i * 1000
-            date = pastDate(thisdate, i)
+            date = date_time.pastDate(this_date, i)
         item: dict = {
             "category": category,
             "name": name,
@@ -111,13 +113,13 @@ def testdata60() -> list:
             "price": price,
             "date": date.isoformat(),
         }
-        utitems.append(item)
-    return utitems
+        ut_items.append(item)
+    return ut_items
 
 
 def testdata30() -> list:
-    utitems: list = list()
-    thisdate = today()
+    ut_items: list = list()
+    this_date = date_time.today()
     for i in range(30):
         category: str
         name: str
@@ -126,17 +128,17 @@ def testdata30() -> list:
             category = "Food"
             name = f"{category}{i}-new"
             price = 1000 + i * 10 + 200
-            date = futureDate(thisdate, i)
+            date = date_time.futureDate(this_date, i)
         elif 10 <= i < 20:
             category = "Book"
             name = f"{category}{i}-new"
             price = 1000 + i * 100 + 200
-            date = futureDate(thisdate, i)
+            date = date_time.futureDate(this_date, i)
         else:
             category = "Tablet"
             name = f"{category}{i}-new"
             price = 10000 + i * 1000 + 200
-            date = pastDate(thisdate, i)
+            date = date_time.pastDate(this_date, i)
         item: dict = {
             "category": category,
             "name": name,
@@ -144,8 +146,8 @@ def testdata30() -> list:
             "price": price,
             "date": date.isoformat(),
         }
-        utitems.append(item)
-    return utitems
+        ut_items.append(item)
+    return ut_items
 
 
 class UtDynamodb(unittest.TestCase):
