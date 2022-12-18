@@ -6,16 +6,19 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    command: bash -c "pipenv run test_dynamodb && pipenv run test_lambdalib"
+    command: bash -c "pipenv run test_dynamodb && pipenv run test_lambdalib && pipenv run test_s3"
     environment:
       AWS_ACCESS_KEY_ID: dummy
-      AWS_SECRET_ACCESS_KEY: dummy
+      AWS_SECRET_ACCESS_KEY: dummydummy
       AWS_REGION: us-east-1
       AWS_DEFAULT_REGION: us-east-1
+      DYNAMODB_ENDPONIT_URL: "http://dynamodb:8000"
+      S3_ENDPONIT_URL: "http://s3:9000"
     volumes:
       - ./:/usr/src/app
     depends_on:
       - dynamodb
+      - s3
     networks:
       - back-tier
 
@@ -57,7 +60,7 @@ services:
       - "9000:9000"
       - "9001:9001"
     entrypoint: bash
-    command: -c "/opt/bin/minio server /data --console-address :9001"
+    command: -c "/opt/bin/minio server /data --address :9000 --console-address :9001"
     restart: always
     environment:
       MINIO_ROOT_USER: dummy
