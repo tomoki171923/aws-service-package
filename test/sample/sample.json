@@ -1,0 +1,25 @@
+{
+  "people": [
+    {
+      "age": 28,
+      "firstName": "Joe",
+      "gender": "male",
+      "lastName": "Jackson",
+      "number": "7349282382"
+    },
+    {
+      "age": 32,
+      "firstName": "James",
+      "gender": "male",
+      "lastName": "Smith",
+      "number": "5678568567"
+    },
+    {
+      "age": 24,
+      "firstName": "Emily",
+      "gender": "female",
+      "lastName": "Jones",
+      "number": "456754675"
+    }
+  ]
+}
