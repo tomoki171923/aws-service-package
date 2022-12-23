@@ -4,7 +4,9 @@ from __future__ import annotations
 
 import boto3
 import os
+import json
 from ..lambdalib.environment import isLocal, isDocker
+
 
 client_kargs: dict = dict()
 if isDocker():
@@ -38,7 +40,7 @@ class S3:
         res = client.delete_bucket(**kwargs)
         return res
 
-    """ getiing the list objects on the s3 bucket.
+    """ getting the list objects on the s3 bucket.
     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.list_objects_v2
     Args:
         path (str): objects root path.
@@ -54,3 +56,55 @@ class S3:
 
     def ls(self, bucket_name: str, path: str) -> list:
         return client.list_objects_v2(Bucket=bucket_name, Prefix=path)["Contents"]
+
+    """ select the objects on the s3 bucket with the S3 SQL expression.
+    https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.select_object_content
+    https://docs.aws.amazon.com/AmazonS3/latest/userguide/s3-glacier-select-sql-reference-select.html
+    Args:
+        kwargs (dict): s3 select arguments.
+        format (bool, optional): wethere format.
+    Returns:
+        dict | list: the result of a s3 select query.
+    """
+
+    def select(self, kwargs: dict, format: bool = True) -> dict | list:
+        if format is False:
+            return client.select_object_content(**kwargs)
+        kwargs["OutputSerialization"] = {
+            "JSON": {
+                "RecordDelimiter": "\n",
+            }
+        }
+        res: dict = client.select_object_content(**kwargs)
+        if "JSON" in kwargs["InputSerialization"]:
+            if kwargs["InputSerialization"]["JSON"]["Type"] == "LINES":
+                return self.__formatSelectQuery(res, "JSONL")
+            else:
+                return self.__formatSelectQuery(res, "JSON")
+        if "CSV" in kwargs["InputSerialization"]:
+            return self.__formatSelectQuery(res, "CSV")
+
+    def __formatSelectQuery(self, res: dict, format_type: str) -> dict | list:
+        if format_type == "JSON":
+            for event in res["Payload"]:
+                if "Records" in event:
+                    return json.loads(event["Records"]["Payload"].decode("UTF-8"))
+        elif format_type == "JSONL":
+            result: list = []
+            text: str = ""
+            for event in res["Payload"]:
+                if "Records" in event:
+                    raw = event["Records"]["Payload"].decode("UTF-8")
+                    text += raw
+            for line in text.splitlines():
+                result.append(json.loads(line))
+        elif format_type == "CSV":
+            result: list = []
+            text: str = ""
+            for event in res["Payload"]:
+                if "Records" in event:
+                    raw = event["Records"]["Payload"].decode("UTF-8")
+                    text += raw
+            for line in text.splitlines():
+                result.append(json.loads(line))
+        return result
