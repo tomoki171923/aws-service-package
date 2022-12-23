@@ -155,7 +155,7 @@ class UtS3BucketSelect(unittest.TestCase):
                 },
             },
             "ExpressionType": "SQL",
-            "Expression": "SELECT * FROM s3object s WHERE s.number = '7349282382' OR s.number = '456754675' ",
+            "Expression": "SELECT * FROM s3object s WHERE s.number in ('7349282382', '456754675') ",
         }
         actual = self.s3.select(ut_arg)
         # type test
@@ -166,7 +166,29 @@ class UtS3BucketSelect(unittest.TestCase):
         self.assertEqual(actual[0]["number"], "7349282382")
         self.assertEqual(actual[1]["number"], "456754675")
 
-    def test_08_select_where_csv(self):
+    def test_08_select_where_jsonl(self):
+        ut_arg: dict = {
+            "Bucket": self.bucket_name,
+            "Key": "sample/sample.jsonl.gz",
+            "InputSerialization": {
+                "CompressionType": "GZIP",
+                "JSON": {
+                    "Type": "LINES",
+                },
+            },
+            "ExpressionType": "SQL",
+            "Expression": "SELECT * FROM s3object s WHERE s.firstName LIKE 'J%' ",
+        }
+        actual = self.s3.select(ut_arg)
+        # type test
+        self.assertIs(type(actual), list)
+        self.__json_data_type_test(actual)
+        # value test
+        self.assertIs(len(actual), 2)
+        self.assertIn("J", actual[0]["firstName"])
+        self.assertIn("J", actual[1]["firstName"])
+
+    def test_09_select_where_csv(self):
         ut_arg: dict = {
             "Bucket": self.bucket_name,
             "Key": "sample/sample.csv",
