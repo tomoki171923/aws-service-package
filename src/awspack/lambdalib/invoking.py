@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
-
+# the following is not necessary if Python version is 3.9 or over.
+from __future__ import annotations
 import json
 import os
 import boto3
@@ -16,7 +17,9 @@ Returns:
 """
 
 
-def invokeLambdaSync(function_region: str, function_name: str, event: dict) -> dict:
+def invokeLambdaSync(
+    function_region: str, function_name: str, event: dict
+) -> dict | int:
     return __execLambda(function_region, function_name, event, "RequestResponse")
 
 
@@ -30,7 +33,9 @@ Returns:
 """
 
 
-def invokeLambdaAsync(function_region: str, function_name: str, event: dict) -> dict:
+def invokeLambdaAsync(
+    function_region: str, function_name: str, event: dict
+) -> dict | int:
     return __execLambda(function_region, function_name, event, "Event")
 
 
@@ -48,7 +53,7 @@ Returns:
 
 def __execLambda(
     function_region: str, function_name: str, event: dict, invocationType: str
-) -> dict:
+) -> dict | int:
     lambda_client = boto3.client("lambda", function_region)
     # when function version is $LATEST, doesn't specify alias
     # but in other case specify it

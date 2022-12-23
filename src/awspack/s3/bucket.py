@@ -3,14 +3,25 @@
 from __future__ import annotations
 
 import boto3
+import os
+from ..lambdalib.environment import isLocal, isDocker
 
-s3_resource = boto3.resource("s3")
+resource_kargs: dict = dict()
+if isDocker():
+    resource_kargs["endpoint_url"] = os.environ.get(
+        "S3_ENDPONIT_URL", "http://host.docker.internal:9000"
+    )
+elif isLocal():
+    resource_kargs["endpoint_url"] = os.environ.get(
+        "S3_ENDPONIT_URL", "http://localhost:9000"
+    )
+resource = boto3.resource("s3", **resource_kargs)
 
 
 class Bucket:
     def __init__(self, bucket_name: str):
         self.bucket_name = bucket_name
-        self.bucket = s3_resource.Bucket(bucket_name)
+        self.bucket = resource.Bucket(bucket_name)
         self.client = None
 
     """ getiing an object information on the s3 bucket.
@@ -25,7 +36,7 @@ class Bucket:
     """
 
     def get(self, path: str) -> dict:
-        obj = s3_resource.Object(self.bucket_name, key=path)
+        obj = resource.Object(self.bucket_name, key=path)
         return obj.get()
 
     """ getiing an object contents on the s3 bucket.
@@ -41,27 +52,6 @@ class Bucket:
     def getContents(self, path: str) -> str:
         return self.get(path)["Body"].read().decode("utf-8")
 
-    """ getiing the list objects on the s3 bucket.
-    https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.list_objects_v2
-    Args:
-        path (str): objects root path.
-    Returns:
-        list: objects contents.
-    e.g.
-        path = 'about/'
-            # => [{'Key': 'about/index.html',
-                    'LastModified': datetime.datetime(2021, 7, 2, 16, 36, 54, tzinfo=tzlocal()),
-                    'ETag': '"b2b1a0db93f5a4598685763fd7b72823"', 'Size': 364050, 'StorageClass': 'STANDARD'},...
-                ]
-    """
-
-    def ls(self, path: str):
-        if self.client is None:
-            self.client = boto3.client("s3")
-        return self.client.list_objects_v2(Bucket=self.bucket_name, Prefix=path)[
-            "Contents"
-        ]
-
     """ creating file on s3 bucket.
     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Object.put
     Args:
@@ -74,7 +64,7 @@ class Bucket:
     """
 
     def create(self, acl: str, body: bytes | str, path: str) -> dict:
-        obj = s3_resource.Object(self.bucket_name, key=path)
+        obj = resource.Object(self.bucket_name, key=path)
         response = obj.put(ACL=acl, Body=body)
         return response
 
@@ -87,7 +77,7 @@ class Bucket:
     """
 
     def delete(self, path: str) -> dict:
-        obj = s3_resource.Object(self.bucket_name, key=path)
+        obj = resource.Object(self.bucket_name, key=path)
         response = obj.delete()
         return response
 
@@ -104,9 +94,7 @@ class Bucket:
     """
 
     def download(self, local_path: str, s3_path: str) -> None:
-        return s3_resource.Object(self.bucket_name, key=s3_path).download_file(
-            local_path
-        )
+        return resource.Object(self.bucket_name, key=s3_path).download_file(local_path)
 
     """ uploading files from local to  s3 bucket.
     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Bucket.upload_file
