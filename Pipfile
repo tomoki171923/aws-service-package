@@ -16,5 +16,5 @@ python_version = "3.9"
 
 [scripts]
 test_dynamodb = 'python -m unittest discover -s test -p "ut_dynamodb_*.py"'
-test_lambdalib = 'python -m unittest discover -s test -p "ut_lambdalib_environment.py"'
+test_lambdalib = 'python -m unittest test.ut_lambdalib_environment'
 test_s3 = 'python -m unittest discover -s test -p "ut_s3_*.py"'
