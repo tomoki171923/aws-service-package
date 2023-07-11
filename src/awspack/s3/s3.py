@@ -55,7 +55,11 @@ class S3:
     """
 
     def ls(self, bucket_name: str, path: str) -> list:
-        return client.list_objects_v2(Bucket=bucket_name, Prefix=path)["Contents"]
+        res: dict = client.list_objects_v2(Bucket=bucket_name, Prefix=path)
+        if "Contents" in res:
+            return res["Contents"]
+        else:
+            return []
 
     """ select the objects on the s3 bucket with the S3 SQL expression.
     https://boto3.amazonaws.com/v1/documentation/api/latest/reference/services/s3.html#S3.Client.select_object_content
