@@ -62,7 +62,16 @@ class UtEBucket(unittest.TestCase):
         self.assertEqual(actual[0]["Key"], expected)
         self.assertEqual(actual[1]["Key"], expected2)
 
-    def test_04_get(self):
+    def test_04_ls(self):
+        ut_arg: str = "404/"
+        expected = []
+        actual = self.s3.ls(bucket_name=self.bucket_name, path=ut_arg)
+        # type test
+        self.assertIs(type(actual), list)
+        # value test
+        self.assertEqual(actual, expected)
+
+    def test_05_get(self):
         ut_arg: str = "test/ut_test.json"
         expected = 200
         actual = self.bucket.get(path=ut_arg)
@@ -71,7 +80,7 @@ class UtEBucket(unittest.TestCase):
         # value test
         self.assertEqual(actual["ResponseMetadata"]["HTTPStatusCode"], expected)
 
-    def test_05_getContents(self):
+    def test_06_getContents(self):
         ut_arg: str = "test/ut_test.json"
         expected = '{"ut": "test"}'
         actual = self.bucket.getContents(path=ut_arg)
@@ -80,7 +89,7 @@ class UtEBucket(unittest.TestCase):
         # value test
         self.assertEqual(actual, expected)
 
-    def test_06_download(self):
+    def test_07_download(self):
         ut_arg: str = "./test/ut_test.json"
         ut_arg2: str = "test/ut_test.json"
         expected = None
@@ -88,7 +97,7 @@ class UtEBucket(unittest.TestCase):
         # value test
         self.assertEqual(actual, expected)
 
-    def test_07_delete(self):
+    def test_08_delete(self):
         ut_arg: str = "test/ut_test.json"
         expected = 204
         actual = self.bucket.delete(path=ut_arg)
@@ -97,7 +106,7 @@ class UtEBucket(unittest.TestCase):
         # value test
         self.assertEqual(actual["ResponseMetadata"]["HTTPStatusCode"], expected)
 
-    def test_08_delete(self):
+    def test_09_delete(self):
         ut_arg: str = "test/ut_test.txt"
         expected = 204
         actual = self.bucket.delete(path=ut_arg)
